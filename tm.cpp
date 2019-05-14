@@ -1,7 +1,14 @@
-#include <stdlib>
 #include <iostream>
 #include <string>
+#include <stdlib>
 using namespace std;
+
+bool readInput(char[] input){
+    for (int i = 0; i < input.size(); i++){
+
+    }
+}
+
 
 
 int main(int argc, char* argv[], char* input){
@@ -24,11 +31,15 @@ int main(int argc, char* argv[], char* input){
             }
             // second line = alphabet
             else if (count == 1){
-                char[] alphabet = line;
+                char[] alphabet = new char[line.size()];
+                line.copy(alphabet, line.size());
+                std::cout << alphabet << '\n' << endl;
             }
             // third line = list of final states
             else if (count == 2){
-                char[] charfinalStates = line;
+                char charfinalStates[line.size()];
+                line.copy(charfinalStates, line.size());
+                std::cout << charfinalStates << '\n' << endl;
                 for (int i = 0; i < numStates; i++){
                     if (isdigit(charfinalStates[i])){
                         // this could be wrong
@@ -40,6 +51,11 @@ int main(int argc, char* argv[], char* input){
             // line 4 = transitions start
             else if (count == 3){
                 char[] transition = line;
+                state = (int)transition[0]);
+                // if input symbol is transition[2]
+                // then write transition[4] to tape and 
+                // move transition[6]  
+                
             }
             count++;
 
