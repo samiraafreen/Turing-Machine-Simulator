@@ -6,6 +6,7 @@
 #include <algorithm>
 using namespace std;
 
+/* struct to store transition rules*/
 struct transition{
     int beginState;
     char read;
@@ -15,20 +16,19 @@ struct transition{
 };
 
 int main(int argc, char* argv[]){
-    if(argc<3){
-        cout << "Invalid input"<<endl;
-        exit(0);
-    }
     // number of states
     int numStates;
-    // number of final states
+    // vector of final states
     vector<int>finalStates;
+    /* vector of alphabet characters*/
     vector<char>alphabet;
+    /* vector of transition rules*/
     vector<transition>trans;
+    /* number of transition rules*/
     int transCount = 0;
-    // opening the file
     int count = 0;
     string line;
+    /* opening file */
     ifstream myfile (argv[1]);
     if (myfile.is_open()){
         while (getline(myfile, line)){
@@ -51,9 +51,10 @@ int main(int argc, char* argv[]){
                     }
                 }
             }
-            // line 4 = transitions start
+            // line 4 = reading transition rules
             else if (count >= 3){
                 trans.push_back(transition());
+                /* for each transition line, the initial state will always be at index 0, read character at index 2, etc... */
                 trans[transCount].beginState = line[0]-'0';
                 trans[transCount].read = line[2];
                 trans[transCount].write = line[4];
@@ -61,47 +62,44 @@ int main(int argc, char* argv[]){
                 trans[transCount].endState = line[8]-'0';
                 transCount++;
             }
+            /* increment count to keep track of what line we are on */
             count++;
         }
         myfile.close();
     }
     else cout << "Unable to open file \n" << endl;
+    numStates++;
 
-    cout << "numStates: " << numStates << endl;
-    for(unsigned int i = 0;i<finalStates.size();i++){
-        std::cout << "finalstates: "<< finalStates[i] << endl;  
-    }
-    for(unsigned int i = 0;i<alphabet.size();i++){
-        std::cout << "alphabet: "<< alphabet[i] << endl;  
-    }
-    for(unsigned int i = 0;i<trans.size();i++){
-        cout << trans[i].beginState << " " << trans[i].read << " " << trans[i].write << " " <<
-        trans[i].move << " " << trans[i].endState << endl;
-    }
-
+    /* set up tape with spaces at either end */
     std::string space = " ";
-    std::string str = space.append(argv[2]).append(space);
+    std::string str;
+    if(argc==3){
+        str = space.append(argv[2]).append(space);
+    }
+    else{
+        str = space.append(space);
+    }
+    /* tape */
     std::vector<char> input(str.begin(), str.end());
+    /* current state */
     int state = 0;
+    /* current tape head position*/
     unsigned int head = 1;
-    while(state!=-1){
-        for(unsigned int i = 0;i<input.size();i++){
-            if(i==head){
-                cout << "q"<<state;
-            }
-            cout << input[i];
-        }    
-        cout << '\n';
+    /* while state is not reject state*/
+    while(state!=-1){   
+        /* checking if state is accept state */ 
         if(find(finalStates.begin(), finalStates.end(), state) != finalStates.end()) {
             cout << "Input accepted." << endl;
             exit(0);
         } 
         else {
+            /* traversing through transition list to find transition that matches */
             for(unsigned int i=0;i<trans.size();i++){
                 if(trans[i].beginState==state && trans[i].read==input[head]){
-                    cout <<"dick";
+                    /* write character */
                     input[head] = trans[i].write;
 
+                    /* move tape head */
                     if(trans[i].move=='>'){
                         head++;
                         if(head>input.size()){
@@ -116,9 +114,11 @@ int main(int argc, char* argv[]){
                         }
                     }
 
+                    /* change state */
                     state = trans[i].endState;
                     break;
                 }
+                /* if no matching transition is found, change state to reject */
                 else if(i==trans.size()-1){
                     state = -1;
                 }
